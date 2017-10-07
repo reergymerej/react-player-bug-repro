@@ -14,10 +14,21 @@ class App extends Component {
     this.setState({ playing: !this.state.playing })
   }
 
+  handleReactPlayerRef(ref) {
+    // Monkey-patch the element's `play` method to return a Promise.
+    const _play = ref.player.player.play
+    ref.player.player.play = () =>
+      _play.apply(ref.player.player) || Promise.resolve()
+  }
+
   render() {
     return (
       <div>
-        <ReactPlayer url="https://cdn.filestackcontent.com/fQt1jMoTxiW7GubuM5MB" playing={this.state.playing} />
+        <ReactPlayer
+          ref={this.handleReactPlayerRef}
+          url="https://cdn.filestackcontent.com/fQt1jMoTxiW7GubuM5MB"
+          playing={this.state.playing}
+        />
         <button onClick={this.handleClick}>toggle play</button>
       </div>
     )
